@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Install Filebeat
+curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.15.2-amd64.deb
+sudo dpkg -i filebeat-8.15.2-amd64.deb
+
+# Create log directories for security tools
+sudo mkdir -p /logs/{nuclei,zap,burp,wapiti,nikto,sqlmap,plain}
+sudo chown -R $USER:$USER /logs
+
+# Open Filebeat config for editing (user must paste their config)
+echo "Please paste your Filebeat configuration in /etc/filebeat/filebeat.yml"
+sudo nano /etc/filebeat/filebeat.yml
+
+# Test Filebeat configuration
+sudo filebeat test config
+
+# Enable and start Filebeat service
+sudo systemctl enable filebeat
+sudo systemctl start filebeat
+
+# Example scan commands (uncomment and run if tools are installed)
+# nuclei -u https://target.com --json -o /logs/nuclei/run.json
+# nikto -h https://target.com -Format json -output /logs/nikto/run.json
+# sqlmap -u "https://target.com/index.php?id=1" --batch --output-dir=/logs/sqlmap --dump-format=JSON
+
+# Check Elasticsearch for ingested data
+curl -X GET "http://localhost:9200/security-scans-*/_search?pretty"
+
+echo "Setup complete! Check Kibana at http://localhost:5601"
