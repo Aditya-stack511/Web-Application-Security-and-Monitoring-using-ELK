@@ -1,0 +1,20 @@
+# Update system
+sudo apt-get update && sudo apt-get upgrade -y
+
+# Install OWASP ZAP
+sudo apt-get install zaproxy -y
+
+# Install Nikto
+sudo apt-get install nikto -y
+
+# Install SQLMap
+sudo apt-get install sqlmap -y
+
+# Install Nuclei
+curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest \
+| grep "browser_download_url.*nuclei_[0-9.]*_linux_amd64.zip" \
+| cut -d '"' -f 4 \
+| wget -i - && unzip nuclei_*_linux_amd64.zip && sudo mv nuclei /usr/local/bin/ && rm nuclei_*_linux_amd64.zip
+
+# Install Burp Suite (Community Edition)
+sudo apt-get install burpsuite -y
